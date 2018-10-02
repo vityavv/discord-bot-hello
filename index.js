@@ -18,15 +18,13 @@ client.on('guildMemberAdd', member => {
 	// Set nickname and role
 	let role = member.guild.roles.find(role => role.name === 'members');
 	// First try
-	if (member.setNickname(nickname) && member.addRole(role)) {
-		client.users.get(admin).send("Sign up done for " + member.user.username + "(" + member.user.tag + ") in " + member.guild.name);
-	}
-	// Retry and message the owner for a later check
-	else {
-		member.setNickname(nickname);
-		member.addRole(role);
+	member.setNickname(nickname).then(() => {
+		member.addRole(role).then(() => {
+			client.users.get(admin).send("Sign up done for " + member.user.username + "(" + member.user.tag + ") in " + member.guild.name);
+		});
+	}).catch(() => {
 		client.users.get(admin).send("Sign up retry for " + member.user.username + "(" + member.user.tag + ") in " + member.guild.name + ".\nYou should check if something wrong!");
-	}
+	})
 	// Get server info and post embed welcome message
 	let welcome = '';
 	let theme = '';
